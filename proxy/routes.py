@@ -19,6 +19,7 @@ def openid_configuration():
 
     return data
 
+
 @api.get("/redirect-request")
 def ui_oauth2():
     args = request.args.to_dict()
