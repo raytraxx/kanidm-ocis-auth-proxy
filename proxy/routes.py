@@ -39,10 +39,12 @@ def oauth2_token():
     headers = dict(request.headers)
 
     if "redirect_uri" in form.keys() and ("localhost" in form["redirect_uri"] or "127.0.0.1" in form["redirect_uri"]):
+        auth_value = bytes(f"{settings.CLIENT_ID}:{settings.CLIENT_SECRET}", encoding="utf-8")
+        headers["Authorization"] = b"Basic " + base64.b64encode(auth_value)
+
         form["redirect_uri"] = f"{settings.BASE_URL}/redirect-response"
-        headers["Authorization"] = b"Basic " + base64.b64encode(
-            bytes(settings.CLIENT_ID, "utf-8") + b":eDTxBa9aVQaCGPEkqQPUYf4vELWhqQpsP7pA8jpFrrryVcMG")
         headers["Host"] = "auth.alejandroavila.com"
+
         del headers["Content-Length"]
 
     resp = requests.post("https://localhost:8443/oauth2/token",

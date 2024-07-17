@@ -4,6 +4,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "LoremIpsum123")
 DEBUG = os.getenv("FLASK_DEBUG", "false").lower() == "true"
 
 CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 
 SERVER_NAME = os.getenv(
     "SERVER_NAME", "localhost:{0}".format(os.getenv("PORT", "8000"))
