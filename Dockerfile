@@ -34,4 +34,4 @@ COPY --chown=python:python . .
 
 EXPOSE 8000
 
-CMD ["gunicorn", "-c", "python:config.gunicorn", "proxy.app:create_app()"]
+CMD ["gunicorn", "-c", "python:config.gunicorn", "proxy:app"]

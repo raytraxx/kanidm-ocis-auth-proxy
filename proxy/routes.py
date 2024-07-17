@@ -2,26 +2,15 @@ import base64
 import urllib.parse
 
 import requests
-from flask import Flask, request, redirect, session
+from flask import request, redirect, session, Blueprint
 
 from config import settings
 
 
-def create_app(settings_override=None):
-    app = Flask(__name__)
-
-    app.config.from_object("config.settings")
-
-    if settings_override:
-        app.config.update(settings_override)
-
-    return app
+api = Blueprint('api', __name__)
 
 
-app = create_app()
-
-
-@app.get("/.well-known/webfinger")
+@api.get("/.well-known/webfinger")
 def webfinger():
     resource = request.args.get("resource")
     return {
@@ -33,7 +22,7 @@ def webfinger():
     }
 
 
-@app.get("/oauth2/openid/ocis/.well-known/openid-configuration")
+@api.get("/oauth2/openid/ocis/.well-known/openid-configuration")
 def openid_configuration():
     r = requests.get(f"{settings.IDM_BASE_URL}/oauth2/openid/ocis/.well-known/openid-configuration")
     data = r.json()
@@ -44,7 +33,7 @@ def openid_configuration():
     return data
 
 
-@app.get("/redirect-request")
+@api.get("/redirect-request")
 def ui_oauth2():
     args = request.args.to_dict()
 
@@ -58,7 +47,7 @@ def ui_oauth2():
     return redirect(f"{settings.IDM_BASE_URL}/ui/oauth2?{query}")
 
 
-@app.get("/redirect-response")
+@api.get("/redirect-response")
 def do_redirect():
     redirect_uri = session["original_redirect_uri"]
     args = request.args.to_dict()
@@ -67,7 +56,7 @@ def do_redirect():
     return redirect(f"{redirect_uri}?{query}")
 
 
-@app.post("/oauth2/token")
+@api.post("/oauth2/token")
 def oauth2_token():
     form = request.form.to_dict()
     headers = dict(request.headers)
