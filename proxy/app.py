@@ -4,6 +4,8 @@ import urllib.parse
 import requests
 from flask import Flask, request, redirect, session
 
+from config import settings
+
 
 def create_app(settings_override=None):
     app = Flask(__name__)
@@ -26,37 +28,37 @@ def webfinger():
         "subject": resource,
         "links": [{
             "rel": "http://openid.net/specs/connect/1.0/issuer",
-            "href": "http://localhost:8000/oauth2/openid/ocis"
+            "href": f"{settings.BASE_URL}/oauth2/openid/ocis"
         }]
     }
 
 
 @app.get("/oauth2/openid/ocis/.well-known/openid-configuration")
 def openid_configuration():
-    r = requests.get("https://auth.alejandroavila.com/oauth2/openid/ocis/.well-known/openid-configuration")
+    r = requests.get(f"{settings.IDM_BASE_URL}/oauth2/openid/ocis/.well-known/openid-configuration")
     data = r.json()
 
-    data["authorization_endpoint"] = "http://localhost:8000/ui/oauth2"
-    data["token_endpoint"] = "http://localhost:8000/oauth2/token"
+    data["authorization_endpoint"] = f"{settings.BASE_URL}/ui/oauth2"
+    data["token_endpoint"] = f"{settings.BASE_URL}/oauth2/token"
 
     return data
 
 
-@app.get("/ui/oauth2")
+@app.get("/redirect-request")
 def ui_oauth2():
     args = request.args.to_dict()
 
     session["original_redirect_uri"] = args["redirect_uri"]
 
     args['client_id'] = "ocis-desktop"
-    args['redirect_uri'] = "http://localhost:8000/redirect"
+    args['redirect_uri'] = f"{settings.BASE_URL}/redirect-response"
 
     query = urllib.parse.urlencode(args)
 
-    return redirect(f"https://auth.alejandroavila.com/ui/oauth2?{query}")
+    return redirect(f"{settings.IDM_BASE_URL}/ui/oauth2?{query}")
 
 
-@app.get("/redirect")
+@app.get("/redirect-response")
 def do_redirect():
     redirect_uri = session["original_redirect_uri"]
     args = request.args.to_dict()
@@ -71,12 +73,12 @@ def oauth2_token():
     headers = dict(request.headers)
 
     if "redirect_uri" in form.keys() and ("localhost" in form["redirect_uri"] or "127.0.0.1" in form["redirect_uri"]):
-        form["redirect_uri"] = "http://localhost:8000/redirect"
+        form["redirect_uri"] = f"{settings.BASE_URL}/redirect-response"
         headers["Authorization"] = b"Basic " + base64.b64encode(b"ocis-desktop:eDTxBa9aVQaCGPEkqQPUYf4vELWhqQpsP7pA8jpFrrryVcMG")
         headers["Host"] = "auth.alejandroavila.com"
         del headers["Content-Length"]
 
-    resp = requests.post("https://auth.alejandroavila.com/oauth2/token",
+    resp = requests.post("https://localhost:8443/oauth2/token",
                          data=form,
                          headers=headers)
 
