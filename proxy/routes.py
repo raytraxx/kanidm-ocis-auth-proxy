@@ -16,6 +16,7 @@ def openid_configuration():
     data = r.json()
 
     data["jwks_uri"] = f"https://auth.alejandroavila.com/oauth2/openid/{settings.CLIENT_ID}/public_key.jwk"
+    data["userinfo_endpoint"] = f"https://auth.alejandroavila.com/oauth2/openid/{settings.CLIENT_ID}/userinfo"
 
     return data
 
