@@ -21,6 +21,16 @@ def openid_configuration():
     return data
 
 
+@api.get("/oauth2/openid/ocis/public_key.jwk")
+def public_keys():
+    key1 = requests.get(f"https://localhost:8443/oauth2/openid/ocis/public_key.jwk", verify=False).json()
+    key2 = requests.get(f"https://localhost:8443/oauth2/openid/{settings.CLIENT_ID}/public_key.jwk", verify=False).json()
+
+    return {
+        "keys": key1["keys"] + key2["keys"],
+    }
+
+
 @api.get("/redirect-request")
 def ui_oauth2():
     args = request.args.to_dict()
