@@ -10,6 +10,15 @@ from config import settings
 api = Blueprint('api', __name__)
 
 
+@api.get("/oauth2/openid/ocis/.well-known/openid-configuration")
+def openid_configuration():
+    r = requests.get(f"https://localhost:8443/oauth2/openid/ocis/.well-known/openid-configuration", verify=False)
+    data = r.json()
+
+    data["jwks_uri"] = f"https://auth.alejandroavila.com/oauth2/openid/{settings.CLIENT_ID}/public_key.jwk"
+
+    return data
+
 @api.get("/redirect-request")
 def ui_oauth2():
     args = request.args.to_dict()
