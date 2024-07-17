@@ -6,7 +6,6 @@ from flask import request, redirect, session, Blueprint
 
 from config import settings
 
-
 api = Blueprint('api', __name__)
 
 
@@ -24,11 +23,23 @@ def openid_configuration():
 @api.get("/oauth2/openid/ocis/public_key.jwk")
 def public_keys():
     key1 = requests.get(f"https://localhost:8443/oauth2/openid/ocis/public_key.jwk", verify=False).json()
-    key2 = requests.get(f"https://localhost:8443/oauth2/openid/{settings.CLIENT_ID}/public_key.jwk", verify=False).json()
+    key2 = requests.get(f"https://localhost:8443/oauth2/openid/{settings.CLIENT_ID}/public_key.jwk",
+                        verify=False).json()
 
     return {
         "keys": key1["keys"] + key2["keys"],
     }
+
+
+@api.get("/oauth2/openid/ocis/userinfo")
+def userinfo():
+    headers = dict(request.headers)
+
+    resp = requests.get(f"https://localhost:8443/oauth2/openid/{settings.CLIENT_ID}/userinfo",
+                        headers=headers,
+                        verify=False)
+
+    return resp.content, resp.status_code, resp.headers.items()
 
 
 @api.get("/redirect-request")
@@ -74,4 +85,3 @@ def oauth2_token():
                          verify=False)
 
     return resp.content, resp.status_code, resp.headers.items()
-
