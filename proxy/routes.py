@@ -69,7 +69,8 @@ def oauth2_token():
 
     resp = requests.post("https://localhost:8443/oauth2/token",
                          data=form,
-                         headers=headers)
+                         headers=headers,
+                         verify=False)
 
     return resp.content, resp.status_code, resp.headers.items()
 
