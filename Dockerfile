@@ -27,7 +27,7 @@ ENV FLASK_DEBUG="${FLASK_DEBUG}" \
     PYTHONUNBUFFERED="true" \
     PYTHONPATH="." \
     PATH="${PATH}:/home/python/.local/bin" \
-    USER="python"
+    USER="python" \
     WEB_CONCURRENCY="2"
 
 COPY --chown=python:python . .
