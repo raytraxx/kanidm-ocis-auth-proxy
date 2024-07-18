@@ -36,8 +36,7 @@ def userinfo():
     headers = dict(request.headers)
 
     resp = requests.get(f"https://localhost:8443/oauth2/openid/{settings.CLIENT_ID}/userinfo",
-                        headers=headers,
-                        verify=False)
+                        headers=headers)
 
     return resp.content, resp.status_code, resp.headers.items()
 
@@ -50,7 +49,7 @@ def ui_oauth2():
 
     query = urllib.parse.urlencode(args)
 
-    resp = requests.get(f"https://localhost:8443/api/oidc/authorization?{query}", verify=False)
+    resp = requests.get(f"http://localhost:9091/api/oidc/authorization?{query}")
 
     return resp.content, resp.status_code, resp.headers.items()
 
@@ -95,10 +94,9 @@ def oidc_token():
     form = request.form.to_dict()
     form["scopes"] = "openid offline_access email profile groups"
 
-    resp = requests.post("https://localhost:8443/oauth2/token",
+    resp = requests.post("http://localhost:9091/oauth2/token",
                          data=form,
-                         headers=headers,
-                         verify=False)
+                         headers=headers)
 
     return resp.content, resp.status_code, resp.headers.items()
 
