@@ -85,3 +85,19 @@ def oauth2_token():
                          verify=False)
 
     return resp.content, resp.status_code, resp.headers.items()
+
+
+@api.post("/api/oidc/token")
+def oidc_token():
+    headers = dict(request.headers)
+
+    form = request.form.to_dict()
+    form["scopes"] = "openid offline_access email profile groups"
+
+    resp = requests.post("https://localhost:8443/oauth2/token",
+                         data=form,
+                         headers=headers,
+                         verify=False)
+
+    return resp.content, resp.status_code, resp.headers.items()
+
