@@ -16,6 +16,8 @@ def ui_oauth2():
 
     query = urllib.parse.urlencode(args)
 
+    print(query)
+
     return redirect(f"{settings.IDM_BASE_URL}/api/oidc/authorization?{query}")
 
 
@@ -28,7 +30,8 @@ def oidc_token():
 
     resp = requests.post(f"{settings.IDM_INTERNAL_SERVER_URL}/api/oidc/token",
                          data=form,
-                         headers=headers)
+                         headers=headers,
+                         verify=False)
 
     print(resp.content, resp.status_code, resp.headers.items())
 
