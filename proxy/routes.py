@@ -42,25 +42,26 @@ def userinfo():
     return resp.content, resp.status_code, resp.headers.items()
 
 
-@api.get("/redirect-request")
+@api.get("/api/oidc/authorization")
 def ui_oauth2():
     args = request.args.to_dict()
-
-    session["original_redirect_uri"] = args["redirect_uri"]
-
-    args['client_id'] = settings.CLIENT_ID
-    args['redirect_uri'] = f"{settings.BASE_URL}/redirect-response"
+    args['scopes'] = "openid offline_access email profile groups"
+    args.pop('prompt', None)
 
     query = urllib.parse.urlencode(args)
 
-    return redirect(f"{settings.IDM_BASE_URL}/ui/oauth2?{query}")
+    resp = requests.get(f"https://localhost:8443/api/oidc/authorization?{query}", verify=False)
+
+    return resp.content, resp.status_code, resp.headers.items()
 
 
 @api.get("/redirect-response")
 def do_redirect():
     redirect_uri = session["original_redirect_uri"]
     args = request.args.to_dict()
+
     query = urllib.parse.urlencode(args)
+
 
     return redirect(f"{redirect_uri}?{query}")
 
