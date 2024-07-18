@@ -24,7 +24,7 @@ def oidc_token():
     headers = dict(request.headers)
 
     form = request.form.to_dict()
-    form["scopes"] = "openid offline_access email profile groups"
+    form["scope"] = "openid offline_access email profile groups"
 
     resp = requests.post(f"{settings.IDM_INTERNAL_SERVER_URL}/oauth2/token",
                          data=form,
