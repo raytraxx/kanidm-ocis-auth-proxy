@@ -30,5 +30,7 @@ def oidc_token():
                          data=form,
                          headers=headers)
 
+    print(resp.content, resp.status_code, resp.headers.items())
+
     return resp.content, resp.status_code, resp.headers.items()
 
