@@ -16,7 +16,7 @@ def ui_oauth2():
 
     query = urllib.parse.urlencode(args)
 
-    resp = requests.get(f"{settings.IDM_BASE_URL}/api/oidc/authorization?{query}")
+    resp = requests.get(f"{settings.IDM_BASE_URL}/api/oidc/authorization?{query}", headers=dict(request.headers))
 
     return resp.content, resp.status_code, resp.headers.items()
 
