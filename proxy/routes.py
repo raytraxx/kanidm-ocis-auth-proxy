@@ -24,14 +24,14 @@ def ui_oauth2():
 @api.post("/api/oidc/token")
 def oidc_token():
     headers = dict(request.headers)
+    headers["User-Agent"] = "Python/Requests"
 
     form = request.form.to_dict()
     form["scope"] = "openid offline_access email profile groups"
 
-    resp = requests.post(f"{settings.IDM_INTERNAL_SERVER_URL}/api/oidc/token",
+    resp = requests.post(f"{settings.IDM_BASE_URL}/api/oidc/token",
                          data=form,
-                         headers=headers,
-                         verify=False)
+                         headers=headers)
 
     print(resp.content, resp.status_code, resp.headers.items())
 
